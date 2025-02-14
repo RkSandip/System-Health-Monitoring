@@ -10,7 +10,7 @@ Original file is located at
 
 
 # Install necessary packages
-!pip install pyngrok flask_sqlalchemy psutil flask
+#!pip install pyngrok flask_sqlalchemy psutil flask
 
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
