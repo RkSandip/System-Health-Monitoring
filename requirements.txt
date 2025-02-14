@@ -1,5 +1,4 @@
-Flask>=2.2.0
-Werkzeug>=2.2.0
+Flask
 Flask_SQLAlchemy
 psutil
 gunicorn
