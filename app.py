@@ -18,7 +18,7 @@ import psutil
 import threading
 import time
 from datetime import datetime
-from pyngrok import ngrok
+
 
 app = Flask(__name__)
 
@@ -122,14 +122,3 @@ monitor_thread = threading.Thread(target=monitor_system)
 monitor_thread.daemon = True
 monitor_thread.start()
 
-from pyngrok import ngrok
-
-# Kill any existing ngrok tunnels
-ngrok.kill()
-
-# Set your authtoken
-ngrok.set_auth_token("2t1L0xbg5ycRRbYcpEpKsalcTsP_6xuKvTHtbotd4mherryT7")
-
-# Create a new tunnel on port 5000
-public_url = ngrok.connect(5000)
-print("Public URL:", public_url)
