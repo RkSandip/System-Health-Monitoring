@@ -8,20 +8,21 @@ import os
 
 app = Flask(__name__)
 
-# Configure Database (Use PostgreSQL if Available)
+    # Configure Database
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///monitor.db")
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# Define the Metadata model
+    #  Metadata model
 class Metadata(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     environment = db.Column(db.String(80))
     location = db.Column(db.String(120))
 
-# Define the Alert model
+
+    # Define the Alert model
 class Alert(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     metric_type = db.Column(db.String(50))
@@ -30,9 +31,10 @@ class Alert(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     status = db.Column(db.String(20))  # e.g., "active" or "resolved"
 
-# Create the database tables
+    # Create the database tables
 with app.app_context():
     db.create_all()
+
 
 # Endpoint to get current system metrics
 @app.route('/api/metrics', methods=['GET'])
@@ -41,6 +43,7 @@ def get_metrics():
     memory = psutil.virtual_memory().percent
     disk = psutil.disk_usage('/').percent
     return jsonify({'cpu': cpu, 'memory': memory, 'disk': disk})
+
 
 # Endpoint to manage metadata: GET to list, POST to add metadata
 @app.route('/api/metadata', methods=['GET', 'POST'])
@@ -60,6 +63,7 @@ def manage_metadata():
             for m in all_meta
         ])
 
+
 # Endpoint to get alerts
 @app.route('/api/alerts', methods=['GET'])
 def get_alerts():
@@ -76,6 +80,7 @@ def get_alerts():
         for a in alerts
     ])
 
+
 # Background thread to monitor system metrics and trigger alerts
 def monitor_system():
     with app.app_context():
@@ -84,19 +89,19 @@ def monitor_system():
             memory = psutil.virtual_memory().percent
             disk = psutil.disk_usage('/').percent
 
-            # Check CPU threshold (e.g., >80%)
+            # Check CPU threshold 
             if cpu > 80:
                 alert = Alert(metric_type="CPU", threshold=80, current_value=cpu, status="active")
                 db.session.add(alert)
                 db.session.commit()
 
-            # Check Memory threshold (e.g., >90%)
-            if memory > 90:
+            # Check Memory threshold
+            if memory > 85:
                 alert = Alert(metric_type="Memory", threshold=90, current_value=memory, status="active")
                 db.session.add(alert)
                 db.session.commit()
 
-            # Check Disk threshold (e.g., disk usage <10% free space)
+            # Check Disk threshold
             if disk < 10:
                 alert = Alert(metric_type="Disk", threshold=10, current_value=disk, status="active")
                 db.session.add(alert)
@@ -104,11 +109,12 @@ def monitor_system():
 
             time.sleep(10)  # Wait 10 seconds before next check
 
+
 # Start the background monitoring thread
 monitor_thread = threading.Thread(target=monitor_system)
 monitor_thread.daemon = True
 monitor_thread.start()
 
-# Ensure app runs properly on Render
+    # Ensure app runs properly on Render
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
