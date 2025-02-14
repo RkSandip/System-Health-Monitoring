@@ -7,7 +7,7 @@ Original file is located at
     https://colab.research.google.com/drive/1wdr4ErGjnOE1ZOo4Ig3LKFwkNZxPinbK
 """
 
-!pkill -f ngrok
+
 
 # Install necessary packages
 !pip install pyngrok flask_sqlalchemy psutil flask
